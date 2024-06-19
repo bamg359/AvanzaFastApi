@@ -35,11 +35,13 @@ class Conexion:
             cursor.execute(query, params)
             self.connection.commit()
             print("Query ejecutado exitosamente")
-            if query.lower().startwith('select'):
+            if query.lower().startswith('select'):
                 result = cursor.fetchall()
-                return  result
+                return result
         except mysql.connector.Error as err:
             print("Error al ejecutar el query" , err)
             return None
         finally:
             cursor.close()
+
+

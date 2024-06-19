@@ -38,15 +38,50 @@ class Estudiante:
         self.contrasena = contrasena
 
 
-    def insertar_estudiante(self, db):
-        query = "insert into estudiante(id_estudiante, tipo_documento, nombre_estudiante, apellido_estudiante, correo, telefono, contrasena)values(%s,%s,%s,%s,%s;%s,%s)"
-        values = (self.id_estudiante, self.tipo_documento, self.nombre_estudiante, self.Apellido_estudiante, self.correo, self.telefono, self.contrasena)
-        db.connect()
+
 
     ##Aqui van los getters and setters
     @app.post('/registrar_est/{id_estudiante, tipo_documento, nombre_estudiante, apellido_estudiante, correo, telefono, contrasena}' , tags=["Registrar Estudiante"])
-    def registrarEstudiante(self, id_estudiante: int = Body(), tipo_documento: str= Body(), nombre_estudiante: str = Body(), apellido_estudiante: str = Body(), correo: str = Body(), telefono: str = Body(), contrasena: str = Body() ):
-        self.insertar_estudiante(db)
+    def registrarEstudiante(id_estudiante: int = Body(), tipo_documento: str= Body(), nombre_estudiante: str = Body(), apellido_estudiante: str = Body(), correo: str = Body(), telefono: str = Body(), contrasena: str = Body() ):
+
+        query = "insert into estudiante(id_estudiante, tipo_documento, nombre_estudiante, apellido_estudiante, correo, telefono, contrasena)values(%s,%s,%s,%s,%s,%s,%s)"
+        values = (
+            id_estudiante, tipo_documento, nombre_estudiante, apellido_estudiante, correo,
+            telefono, contrasena)
+        db.execute_query(query, values)
+
+    @staticmethod
+    def from_row(row):
+        return Estudiante(row[0], row[1], row[2], row[3], row[4], row[5], row[6])
+
+    @staticmethod
+    @app.get('/get_estudiante/{id_estudiante}', tags=["Obtener Estudiantes"])
+    def consultar_estudiente(id_estudiante: int):
+
+        query = "SELECT * FROM estudiante WHERE id_estudiante = %s"
+        result = db.execute_query(query , (id_estudiante,))
+        if result:
+            return Estudiante.from_row(result[0])
+        else:
+            print("Estudiante no encontrado")
+            return None
+
+
+    @staticmethod
+    @app.get('/get_estudiantes', tags = ["Obtener estudiantes"])
+    def consultar_estudiantes():
+        query = "SELECT * FROM estudiente"
+        result = db.execute_query(query)
+        if result:
+         listado_estudiantes = []
+         for row in result:
+             estudiante = Estudiante.from_row(row)
+             listado_estudiantes.append(estudiante)
+         return listado_estudiantes
+
+
+
+
 
 
 
