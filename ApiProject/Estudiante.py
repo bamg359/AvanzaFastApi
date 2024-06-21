@@ -70,7 +70,7 @@ class Estudiante:
     @staticmethod
     @app.get('/get_estudiantes', tags = ["Obtener estudiantes"])
     def consultar_estudiantes():
-        query = "SELECT * FROM estudiente"
+        query = "SELECT * FROM estudiante"
         result = db.execute_query(query)
         if result:
          listado_estudiantes = []
@@ -78,6 +78,15 @@ class Estudiante:
              estudiante = Estudiante.from_row(row)
              listado_estudiantes.append(estudiante)
          return listado_estudiantes
+        else:
+            return []
+
+
+    @staticmethod
+    @app.delete('/delete_estudiante/{id_estudiante}', tags=["Eliminar_estudiante"])
+    def eliminar_estudiante(id_estudiante: int):
+        query = "DELETE FROM estudiante WHERE id_estudiante = %s"
+        db.execute_query(query, (id_estudiante,))
 
 
 
